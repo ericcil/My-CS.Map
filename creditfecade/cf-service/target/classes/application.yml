@@ -1,0 +1,64 @@
+#注：yml无法被@PropertySource加载
+server:
+  port: 8081
+
+app:
+  name: cf-service
+spring:
+  profiles:
+    active: dev
+#  datasource:
+#    type: com.alibaba.druid.pool.DruidDataSource
+#    driver-class-name: com.mysql.jdbc.Driver
+
+logging:
+  level:
+    com.vcredit: debug
+  file: "E:/test.log"
+  max-size: 1
+  pattern:
+    dateformat: yyyy-MM-dd
+
+#mapper.xml配置
+mybatis:
+  mapper-locations: classpath:com/vcredit/persistence/*Mapper.xml
+  configuration-properties:
+    dialect: mysql
+
+
+---
+
+spring:
+  profiles: dev
+#  datasource:
+#    password: miaofen_dev
+#    username: dev
+#    url: jdbc:mysql://10.138.60.74:3306/miaofen_shop?useUnicode=true&characterEncoding=utf-8&serverTimezone=Shanghai
+
+datasource:
+  url: jdbc:mysql://10.138.60.74:3306/miaofen_shop?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+  username: dev
+  password: miaofen_dev
+
+---
+
+spring:
+  profiles: test
+
+server:
+  port: 8082
+logging:
+  level:
+    com.vcredit: debug
+
+---
+
+spring:
+  profiles: prd
+
+server:
+  port: 8083
+logging:
+  level:
+    com.vcredit: info
+  file: ${catalina.base}"/logs"

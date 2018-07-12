@@ -1,3 +1,4 @@
+/*
 package com.vcredit;
 
 import org.mybatis.generator.api.MyBatisGenerator;
@@ -9,10 +10,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * @Author chenyubin
  * @Date 2018/7/10
- */
+ *//*
+
 public class MBG {
 
     public static void main(String[] args) {
@@ -34,3 +37,4 @@ public class MBG {
         myBatisGenerator.generate(null);
     }
 }
+*/

@@ -1,7 +1,8 @@
 package com.vcredit.service.process;
 
-import com.vcredit.process.dto.ChannelParam1;
-import com.vcredit.process.dto.ProcessContext;
+import com.vcredit.service.process.boot.DefaultCopyOnWritePipline;
+import com.vcredit.service.process.dto.DefaultChannelParam;
+import com.vcredit.service.process.dto.ProcessContext;
 
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
@@ -13,7 +14,7 @@ import java.util.concurrent.Executors;
  */
 public class DefaultCreditPiplineThreadTest {
 
-    private static DefaultCreditPipline<ChannelParam1> pipline;
+    private static DefaultCopyOnWritePipline<DefaultChannelParam> pipline;
     private static CyclicBarrier cb = new CyclicBarrier(11);
 
     private static CyclicBarrier closeCb = new CyclicBarrier(11);
@@ -63,11 +64,11 @@ public class DefaultCreditPiplineThreadTest {
             }
 
             String threadName = Thread.currentThread().getName();
-            ProcessContext<ChannelParam1> context = new ProcessContext<>();
-            ChannelParam1 channelParam1 = new ChannelParam1();
-            channelParam1.setName("授信通道"+threadName);
-            channelParam1.setDescript(threadName);
-            context.setProcessParam(channelParam1);
+            ProcessContext<DefaultChannelParam> context = new ProcessContext<>();
+            DefaultChannelParam defaultChannelParam = new DefaultChannelParam();
+            defaultChannelParam.setName("授信通道"+threadName);
+            defaultChannelParam.setDescript(threadName);
+            context.setProcessParam(defaultChannelParam);
             pipline.startProcessLine(context);
 
             try {

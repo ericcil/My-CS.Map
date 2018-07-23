@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+<script src="../jquery-2.1.1.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap-table.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap-treeview.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstarp-table-zh-CN.min.js"></script>
+
+<script src="../js/base.js"></script>
+
+<link rel="stylesheet" 	href="../bootstrap-3.3.7-dist/css/bootstrap-treeview.min.css">
+<link rel="stylesheet" 	href="../bootstrap-3.3.7-dist/css/bootstrap.min.css">
+<link rel="stylesheet" 	href="../bootstrap-3.3.7-dist/css/bootstrap-table.min.css">
+<link rel="stylesheet"	href="../bootstrap-3.3.7-dist/css/bootstrap-table.min.css">
+</head>
+
+<body>
+	<div id="tree"></div>
+</body>
+
+<script>
+	var host = "http://" + window.location.host + "/cc-service";
+	var tree = [];
+	$(function() {
+		initTreeData()
+		
+	})
+	var initTree = function(data){
+		$("#tree").treeview({
+			state: {
+			    checked:true,
+			    disabled:true,
+			    expanded:false,
+			    selected:true
+			  },
+			data : tree,// 赋值
+			showTags : true,
+			loadingIcon:"fa fa-hourglass",//懒加载过程中显示的沙漏字符图标
+			onNodeSelected:function(event, data) {
+				if(data.nodes != null){
+					$('#tree').treeview('toggleNodeExpanded', [ data.nodeId, { silent: true } ]);
+
+				}else{
+					var index = 0;
+					$('#tree').treeview('addNode', [ getSonNodes(data.id), data,index, { silent: true }] );
+				}
+			},
+		}); 
+	}
+	
+	function loaddata(node,func){//这个技巧真高，即能得到节点数据，又能把节点下级的数据通过函数发回去
+		  var singleNode = getSonNodes(node.id);
+		  func(singleNode);//把新的下级节点数据发回到后端，这样明显优雅很多
+		}
+	
+	var initTreeData = function() {
+		$.ajax({
+			url : host + "/dic/dicitionarys",
+			type : 'GET',
+			data : {},
+			contentType : 'application/json;charset=utf-8',
+			success : function(data) {
+				tree = initNodeList(data.content);
+				initTree(tree);
+			},
+			error : function(msg) {
+				alert("请求异常");
+				console.log(msg);
+			}
+		})
+	}
+
+	var initNodeList = function(list) {
+		if (list == null || list.length == null)
+			return;
+		var nodes = [];
+		$.each(list, function(index, value) {
+			var node = {};
+			// text是显示的内容
+			node["text"] = value.value;
+			node["id"] = value.id;
+			node["nodes"] = initNodeList(value.sonList);
+			nodes.push(node);
+		})
+		return nodes;
+	}
+
+	var getSonNodes = function(parentId) {
+		$.ajax({
+			url : host + "/dic/sonDics/" + parentId,
+			type : 'GET',
+			data : {},
+			contentType : 'application/json;charset=utf-8',
+			success : function(data) {
+				sonNodes = initNodeList(data.content);
+				console.log(sonNodes);
+				return sonNodes;
+			},
+			error : function(msg) {
+				alert("请求异常");
+				console.log(msg);
+			}
+		})
+	}
+	
+</script>
+
+</html>

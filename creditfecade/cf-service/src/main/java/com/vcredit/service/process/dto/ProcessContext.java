@@ -1,5 +1,8 @@
 package com.vcredit.service.process.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
@@ -7,6 +10,8 @@ import java.util.Date;
  * @Date 2018/7/2
  * @Description 流程上下文，包含流程的元数据和实体数据
  */
+@Setter
+@Getter
 public class ProcessContext<T> {
 
     //元数据
@@ -21,51 +26,5 @@ public class ProcessContext<T> {
     private T processParam;//流程参数
     private StepResult currentStepResult;//当前步骤结果
 
-    public Date getReceiveTime() {
-        return receiveTime;
-    }
 
-    public void setReceiveTime(Date receiveTime) {
-        this.receiveTime = receiveTime;
-    }
-
-    public Date getSubmitTime() {
-        return submitTime;
-    }
-
-    public void setSubmitTime(Date submitTime) {
-        this.submitTime = submitTime;
-    }
-
-    public int getCurrentIndex() {
-        return currentIndex;
-    }
-
-    public void setCurrentIndex(int currentIndex) {
-        this.currentIndex = currentIndex;
-    }
-
-    public boolean isProcessInterrupt() {
-        return processInterrupt;
-    }
-
-    public void setProcessInterrupt(boolean processInterrupt) {
-        this.processInterrupt = processInterrupt;
-    }
-
-    public T getProcessParam() {
-        return processParam;
-    }
-
-    public void setProcessParam(T processParam) {
-        this.processParam = processParam;
-    }
-
-    public StepResult getCurrentStepResult() {
-        return currentStepResult;
-    }
-
-    public void setCurrentStepResult(StepResult currentStepResult) {
-        this.currentStepResult = currentStepResult;
-    }
 }

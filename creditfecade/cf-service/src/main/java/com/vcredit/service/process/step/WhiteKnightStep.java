@@ -4,17 +4,15 @@ import com.vcredit.service.process.CentralizeStep;
 import com.vcredit.service.process.dto.DefaultChannelParam;
 import com.vcredit.service.process.dto.ProcessContext;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
  * @Author chenyubin
- * @Date 2018/7/5
+ * @Date 2018/7/20
  */
 @Component
 @Slf4j
-public class BlackListStep implements CentralizeStep {
+public class WhiteKnightStep implements CentralizeStep {
 
 
     @Override
@@ -29,6 +27,7 @@ public class BlackListStep implements CentralizeStep {
 
     @Override
     public String getStepName() {
-        return "集团黑名单接口";
+        return "白骑士";
     }
+
 }

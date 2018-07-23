@@ -45,11 +45,11 @@ public class DBManager {
 
     private boolean updatePwd(DruidDataSource druidDataSource, String pwd) {
         try(Connection conn = DriverManager.getConnection(druidDataSource.getUrl(), druidDataSource.getUsername(),druidDataSource.getPassword());
-            Statement statement = conn.createStatement();
+            PreparedStatement statement = conn.prepareStatement("SET PASSWORD = PASSWORD('?')");
         ){
             // 修改密码
-            String sql = "SET PASSWORD = PASSWORD('" + pwd + "')";
-            if( statement.executeUpdate(sql) == 0 ) return false;
+            statement.setString(1,pwd);
+            if( !statement.execute() ) return false;
         } catch (Exception e) {
             logger.error("修改数据库密码异常了",e);
             return false;

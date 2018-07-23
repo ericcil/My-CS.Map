@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.vcredit.persistence.mapper.WhiteListMapper">
+  <resultMap type="com.vcredit.persistence.po.WhiteList" id="whiteList">
+    <result property="id" column="id" />
+    <result property="accountName" column="account_name" />
+    <result property="idno" column="idno" />
+    <result property="project" column="project" />
+    <result property="status" column="status" />
+    <result property="createdTime" column="created_time" />
+    <result property="updateTime" column="update_time" />
+  </resultMap>
+
+	<insert id="insert" parameterType="com.vcredit.persistence.po.WhiteList" useGeneratedKeys="true" keyProperty="id">
+    	insert into `t_white_list`(
+    	<trim prefixOverrides=",">
+    		<if test="true">
+    			,`id`
+    		</if>
+	    	<if test="accountName != null">
+	    		,`account_name`
+	    	</if>
+	    	<if test="idno != null">
+	    		,`idno`
+	    	</if>
+	    	<if test="project != null">
+	    		,`project`
+	    	</if>
+	    	<if test="status != null">
+	    		,`status`
+	    	</if>
+	    	<if test="createdTime != null">
+	    		,`created_time`
+	    	</if>
+	    	<if test="updateTime != null">
+	    		,`update_time`
+	    	</if>
+    	</trim>
+    	) values(
+		<trim prefixOverrides=",">
+    		<if test="true">
+    			,#{id}
+    		</if>
+	    	<if test="accountName != null">
+    			,#{accountName}
+    		</if>
+	    	<if test="idno != null">
+    			,#{idno}
+    		</if>
+	    	<if test="project != null">
+    			,#{project}
+    		</if>
+	    	<if test="status != null">
+    			,#{status}
+    		</if>
+	    	<if test="createdTime != null">
+    			,#{createdTime}
+    		</if>
+	    	<if test="updateTime != null">
+    			,#{updateTime}
+    		</if>
+    	</trim>
+    	)
+	</insert>
+	<update id="update" parameterType="com.vcredit.persistence.po.WhiteList">
+		update `t_white_list` 
+		<trim prefix="set" prefixOverrides=","> 
+					<if test="accountName !=null">
+						,`account_name` = #{accountName}
+					</if>
+					<if test="idno !=null">
+						,`idno` = #{idno}
+					</if>
+					<if test="project !=null">
+						,`project` = #{project}
+					</if>
+					<if test="status !=null">
+						,`status` = #{status}
+					</if>
+					<if test="createdTime !=null">
+						,`created_time` = #{createdTime}
+					</if>
+					<if test="updateTime !=null">
+						,`update_time` = #{updateTime}
+					</if>
+		</trim>
+		where `id` = #{id}
+	</update>
+	<select id="findById" parameterType="java.lang.Long" resultMap="whiteList">
+		select * from `t_white_list` where id = #{id}
+	</select>
+	<select id="find" parameterType="com.vcredit.persistence.po.WhiteList" resultMap="whiteList">
+		select * from `t_white_list`
+		<where>
+				<if test="id !=null">
+					and `id` = #{id} 
+				</if>
+				<if test="accountName !=null">
+					and `account_name` = #{accountName} 
+				</if>
+				<if test="idno !=null">
+					and `idno` = #{idno} 
+				</if>
+				<if test="project !=null">
+					and `project` = #{project} 
+				</if>
+				<if test="status !=null">
+					and `status` = #{status} 
+				</if>
+				<if test="createdTime !=null">
+					and `created_time` = #{createdTime} 
+				</if>
+				<if test="updateTime !=null">
+					and `update_time` = #{updateTime} 
+				</if>
+		</where>
+	</select>
+</mapper>

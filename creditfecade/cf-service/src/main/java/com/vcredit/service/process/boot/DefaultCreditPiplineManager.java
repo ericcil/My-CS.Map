@@ -1,10 +1,14 @@
 package com.vcredit.service.process.boot;
 
+import com.vcredit.domain.CreditProcessDomain;
+import com.vcredit.persistence.po.CreditConfig;
 import com.vcredit.service.process.CentralizeStep;
 import com.vcredit.service.process.CreditPipline;
 import com.vcredit.service.process.Step;
 import com.vcredit.service.process.dto.DefaultChannelParam;
 import com.vcredit.service.process.dto.ProcessContext;
+import enums.UseStatusEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -17,22 +21,67 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Date 2018/7/3
  */
 @Component
+@Slf4j
 public class DefaultCreditPiplineManager {
 
     //用于存储已经注册初始化的pipline
     private static final transient Map<String,CreditPipline<DefaultChannelParam> >piplineMap = new ConcurrentHashMap<>(20);
     private static final transient Map<String,CentralizeStep> stepPool = new ConcurrentHashMap<>(20);
 
-    private ApplicationContext applicationContext;
 
     @Autowired
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-        Map<String,CentralizeStep> cStepMap = this.applicationContext.getBeansOfType(CentralizeStep.class);
+    private CreditProcessDomain processDomain;
+
+    @Autowired
+    public void initiator(ApplicationContext applicationContext) {
+        Map<String,CentralizeStep> cStepMap = applicationContext.getBeansOfType(CentralizeStep.class);
         cStepMap.forEach( (key,value) ->{
             stepPool.put(value.getStepName(),value);
         });
-        //TODO 管道初始化待补充
+        piplineDBInitiator(processDomain);
+    }
+
+    /**
+     * 从数据库初始化管道
+     * @param processDomain
+     */
+    private void piplineDBInitiator(CreditProcessDomain processDomain){
+        List<String> names = processDomain.queryExistsProjectProcessName();
+        List<CreditConfig> creditConfigs;
+        for(String name :names) {
+            creditConfigs = processDomain.getFullConfigInfoByProject(name);
+            reindexPiplineByDB(creditConfigs);
+        }
+
+    }
+
+
+    /**
+     * 根据给定配置刷新
+     * @param creditConfigs
+     * @return
+     */
+    public boolean reindexPiplineByDB(List<CreditConfig> creditConfigs){
+        CreditPipline<DefaultChannelParam> newPipline = new DefaultCopyOnWritePipline<>();
+        CreditConfig config;
+        String plkey = null;
+        for(int i=0,k=0,size=creditConfigs.size() ;i<size ;i++){
+            config = creditConfigs.get(i);
+            plkey = config.getProjectName();
+            log.debug("====={}",config.toString());
+            if(!stepExistsCheck(config.getStepName()) || !UseStatusEnum.INUSE.getCode().equals(config.getUseStatus()) ){
+                log.debug("未添加==={}",config.toString());
+                continue; //不存在步骤池中,非有效，无法添加
+            }
+            newPipline.addStep(k,stepPool.get(config.getStepName()));
+            k++;
+        }
+        piplineMap.put(plkey,newPipline);
+        return true;
+    }
+
+    private boolean stepExistsCheck(String nameWill){
+        return stepPool.containsKey(nameWill);
     }
 
 
@@ -71,7 +120,7 @@ public class DefaultCreditPiplineManager {
      * @Param key
      * @return
      */
-    public CreditPipline selectePipline(String key){
+    private CreditPipline selectePipline(String key){
         return piplineMap.get(key);
     }
 
@@ -82,7 +131,8 @@ public class DefaultCreditPiplineManager {
      * @param index
      * @param stepKey
      */
-    public void addStep(String plKey,int index,String stepKey){
+    public boolean addStep(String plKey,int index,String stepKey){
+        if(!stepExistsCheck(stepKey)) return false; //不存在步骤池中，无法添加
         CreditPipline<DefaultChannelParam> pipline = selectePipline(plKey);
         if(pipline == null){
             pipline = new DefaultCopyOnWritePipline<>();
@@ -92,6 +142,7 @@ public class DefaultCreditPiplineManager {
         }else {
             pipline.addStep(index, stepPool.get(stepKey));
         }
+        return true;
     }
 
     /**
@@ -101,14 +152,6 @@ public class DefaultCreditPiplineManager {
      */
     public void removeStep(String key,int index){
         selectePipline(key).remove(index);
-    }
-
-    public void removeAllStep(String key){
-        selectePipline(key).clean();
-    }
-
-    public String getKey(Object processParam){
-        return processParam.getClass().getName();
     }
 
 

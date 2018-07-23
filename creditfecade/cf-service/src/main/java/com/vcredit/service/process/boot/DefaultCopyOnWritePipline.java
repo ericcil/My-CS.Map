@@ -65,7 +65,7 @@ public final class DefaultCopyOnWritePipline<P> implements CreditPipline<P> {
         context.setReceiveTime(Calendar.getInstance().getTime());
         fireProcess(0,context);
         context.setSubmitTime(Calendar.getInstance().getTime());
-        logger.info("流程完全结束==={}", JSON.toJSONString(context));
+        logger.debug("流程完全结束==={}", JSON.toJSONString(context));
     }
 
     @Override

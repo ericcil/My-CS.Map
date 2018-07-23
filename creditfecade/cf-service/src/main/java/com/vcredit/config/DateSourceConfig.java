@@ -18,7 +18,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableTransactionManagement
-@MapperScan(basePackages = "com.vcredit.persistence")
+@MapperScan(basePackages = "com.vcredit.persistence.mapper")
 public class DateSourceConfig {
 
     @Value("${datasource.url}")
@@ -28,7 +28,7 @@ public class DateSourceConfig {
     @Value("${datasource.password}")
     private String password;
 
-    private static final String driverClassName = "com.mysql.cj.jdbc.Driver";
+    private static final String driverClassName = "com.mysql.jdbc.Driver";//"com.mysql.cj.jdbc.Driver";
     private static final String validationQuery = "SELECT 1 FROM DUAL";
     private static final int initialSize = 10;
     private static final int minIdle = 10;

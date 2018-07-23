@@ -8,12 +8,14 @@ import java.util.List;
 @Component
 public interface CreditConfigMapper {
 
-    int insertSelective(CreditConfig record);
+	void insert(CreditConfig obj);
 
+	void update(CreditConfig obj);
 
-    CreditConfig selectByPrimaryKey(Long id);
+	List<CreditConfig> find(CreditConfig obj);
 
-    int updateByPrimaryKeySelective(CreditConfig record);
+	CreditConfig findById(Long id);
 
-    List<CreditConfig> selectByCondition(CreditConfig config);
+	List<CreditConfig> findOrderConfigByName(String projectName);
+
 }

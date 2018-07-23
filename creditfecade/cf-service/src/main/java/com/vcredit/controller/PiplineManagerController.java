@@ -41,7 +41,7 @@ public class PiplineManagerController {
         String stepKey = param.get("stepKey");
         String plkey = param.get("plKey");
         String index = param.get("index");
-        piplineManager.addStep(plkey,Integer.valueOf(index),stepKey);
+        piplineManager.addStep(plkey,Integer.parseInt(index),stepKey);
     }
 
     @PostMapping("/remove-step")
@@ -49,6 +49,6 @@ public class PiplineManagerController {
         String plkey = param.get("plKey");
         String index = param.get("index");
         System.out.println("========="+JSON.toJSONString(param));
-        piplineManager.removeStep(plkey,Integer.valueOf(index));
+        piplineManager.removeStep(plkey,Integer.parseInt(index));
     }
 }

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Title</title>
+<script src="../jquery-2.1.1.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap-table.min.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap-treeview.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstarp-table-zh-CN.min.js"></script>
+
+<script src="../js/base.js"></script>
+<script src="../plugin/js/bootstrap-treeview-lazy-load.js"></script>
+
+<link rel="stylesheet" 	href="../bootstrap-3.3.7-dist/css/bootstrap-treeview.css">
+<link rel="stylesheet" 	href="../bootstrap-3.3.7-dist/css/bootstrap.min.css">
+<link rel="stylesheet" 	href="../bootstrap-3.3.7-dist/css/bootstrap-table.min.css">
+<link rel="stylesheet"	href="../bootstrap-3.3.7-dist/css/bootstrap-table.min.css">
+</head>
+
+<body>
+	<div id="tree"></div>
+</body>
+
+<script>
+	var host = "http://" + window.location.host + "/cc-service";
+
+	var tree = [];
+	$(function() {
+		initTree();
+	})
+	
+	var initTree = function() {
+		$.ajax({
+			url : host + "/dic/dicitionarys",
+			type : 'GET',
+			data : {},
+			contentType : 'application/json;charset=utf-8',
+			success : function(data) {
+				tree = initNodeList(data.content);
+				/* var $Tree = $('#tree').treeview({
+		            data: tree,
+		            lazyLoad:true,
+		            lazyLoad: function (node, display) {
+		            	alert();
+		            	console.log(node);
+		                data = getSonNodes(node.id);
+		                display(data);
+		            }
+		        }); */
+				$("#tree").treeview({
+					 state: {
+						    checked:true,
+						    disabled:true,
+						    expanded:true,
+						    selected:true
+						  },
+					data : tree,// 赋值
+					showTags : true,
+					onNodeSelected:function(event, data) {
+						if(data.nodes != null){
+							alert("expand");
+							$('#tree').treeview('toggleNodeExpanded', [ data.nodeId, { silent: true } ]);
+
+						}else{
+							alert("get");
+							var index = 0;
+							$('#tree').treeview('addNode', [ getSonNodes(data.id), data,index, { silent: true }] );
+						}
+					},
+				}); 
+			},
+			error : function(msg) {
+				alert("请求异常");
+				console.log(msg);
+			}
+		})
+	}
+
+
+	var initNodeList = function(list) {
+		if (list == null || list.length == null)
+			return;
+		var nodes = [];
+		$.each(list, function(index, value) {
+			var node = {};
+			// text是显示的内容
+			node["text"] = value.value;
+			node["id"] = value.id;
+			node["nodes"] = initNodeList(value.sonList);
+			nodes.push(node);
+		})
+		return nodes;
+	}
+
+	var getSonNodes = function(parentId) {
+		$.ajax({
+			url : host + "/dic/sonDics/" + parentId,
+			type : 'GET',
+			data : {},
+			contentType : 'application/json;charset=utf-8',
+			success : function(data) {
+				sonNodes = initNodeList(data.content);
+				console.log(sonNodes);
+				return sonNodes;
+			},
+			error : function(msg) {
+				alert("请求异常");
+				console.log(msg);
+			}
+		})
+	}
+	
+</script>
+
+</html>

@@ -1,10 +1,17 @@
 package com.vcredit.controller.interception.base;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * 默认使用的统一回参包装
  * @Author chenyubin
  * @Date 2018/7/11
  */
+@Getter
+@Setter
+@Accessors(chain = true)
 public class ResultBody<T> {
 
     public static final Integer CODE_SUCCESS = 1;//请求完成
@@ -16,37 +23,6 @@ public class ResultBody<T> {
     private T content;
     private String msg;
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public T getContent() {
-        return content;
-    }
-
-    public void setContent(T content) {
-        this.content = content;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     /**
      * 成功包装

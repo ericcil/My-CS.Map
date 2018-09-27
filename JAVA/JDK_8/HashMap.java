@@ -1,28 +1,3 @@
-/*
- * Copyright (c) 1997, 2017, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
 package java.util;
 
 import java.io.IOException;
@@ -709,7 +684,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                 if ((e = oldTab[j]) != null) {
                     oldTab[j] = null;
                     if (e.next == null)
+                        //如果不是链表就直接加入新table
                         newTab[e.hash & (newCap - 1)] = e;
+                    //如果是红黑树，进行重组
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
                     else { // preserve order
@@ -718,6 +695,11 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                         Node<K,V> next;
                         do {
                             next = e.next;
+                            /*
+                             * 因为cap始终未2的幂 每次增长都是*2 即 << 1
+                             * e.hash & (oldCap - 1 ) 和 e.hash & (newCap - 1) 只是最高位&有区别
+                             * 直接采用 e.hash & oldCap 判断最高位，高位为0则没有变化
+                             */
                             if ((e.hash & oldCap) == 0) {
                                 if (loTail == null)
                                     loHead = e;
@@ -725,6 +707,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
                                     loTail.next = e;
                                 loTail = e;
                             }
+                            //桶位置有变化的情况
                             else {
                                 if (hiTail == null)
                                     hiHead = e;

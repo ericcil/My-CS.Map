@@ -304,6 +304,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * to incorporate impact of the highest bits that would otherwise
      * never be used in index calculations because of table bounds.
      */
+    //高16位保持不变，低16位与高16位异或
     static final int hash(Object key) {
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
@@ -643,6 +644,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * @return the table
      */
     final Node<K,V>[] resize() {
+        //此处获取成员变量对象的引用，不同于7在for判断直接使用成员变量，并发扩容不会出现死循环，只会出现丢失数据
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
@@ -841,6 +843,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     public void clear() {
         Node<K,V>[] tab;
         modCount++;
+        //最后没有赋值回table可能是考虑，并发时优先保证其他操作
         if ((tab = table) != null && size > 0) {
             size = 0;
             for (int i = 0; i < tab.length; ++i)

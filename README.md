@@ -61,20 +61,77 @@
   > * 阻止指令重排序
   >
   >   懒汉模式单例，双重检测，防治 instance = new instance 时被重排
+  >
+  > * 底层实现
+  >
+  >   内存屏障：
+
+* Atomic*
+
+  * AtomicInteger
+  * LongAdder
+  * AtomicStampReference
 
 * JUC
 
-  * Atomic*
-    * AtomicInteger
-    * LongAdder
-    * AtomicStampReference
+  * AQS
+
   * ReentrantLock
+
+    底层实现cas
+
+    和synchronized差异
+
   * CountDownLatch
+
   * CyclicBarrier
+
   * Phaser
-  * ReadWriteLock
+
+  * ReadWriteLock - StampedLock
+
   * Semaphore
+
   * Exchanger
+
+  * LockSoupport
 
 * 
 
+------
+
+
+
+### IO
+
+* IO模型
+
+  * 同步阻塞模型
+
+    通过socket，accept()，read()都是阻塞
+
+  * 同步非阻塞模型
+
+    基于select()，需要用户空间向内核空间传入需要访问的所有fd,内核进行遍历，给用户空间返
+
+    poll回可以读取的fd
+
+    poll
+
+  * 多路复用模型（selector）
+
+    基于epoll：epoll_create()、epoll_ctl()、epoll_wait()
+
+  * 信号驱动IO模型
+
+  * 异步IO模型
+
+* JAVA NIO
+
+* Netty
+
+------
+
+
+
+### 网络
